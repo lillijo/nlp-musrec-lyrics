@@ -3,3 +3,5 @@
 *.csv
 /NRC*
 .ipynb_checkpoints
+*.zip
+*.model

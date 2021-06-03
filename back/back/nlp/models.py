@@ -14,11 +14,11 @@ class Song(models.Model):
     title = models.CharField(max_length=200)
     artist = models.CharField(max_length=200)
     music_id = models.CharField(max_length=200, primary_key=True)
-    genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
-    words = models.ManyToManyField(Word)
+    genre = models.ForeignKey(Genre, on_delete=models.CASCADE, blank=True, null=True)
+    words = models.ManyToManyField(Word, blank=True)
     vector = models.CharField(max_length=800)
     tsne_vector = models.CharField(max_length=100)
-    most_similar = models.ForeignKey('self', on_delete=models.PROTECT)
+    most_similar = models.ForeignKey('self', on_delete=models.PROTECT, blank=True, null=True)
 
 
 

@@ -16,9 +16,11 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
         fields = ['url', 'name']
 
 class SongSerializer(serializers.HyperlinkedModelSerializer):
+    words = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    genre = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
     class Meta:
         model = Song
-        fields = ['artist', 'title', 'genre']
+        fields = ['artist', 'title', 'genre','words', 'music_id', 'vector']
 
 class WordSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:

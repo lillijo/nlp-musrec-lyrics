@@ -8,12 +8,15 @@ from django.db.models.query_utils import Q
 from django.shortcuts import render
 
 from django.contrib.auth.models import User, Group
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from rest_framework import permissions
 from rest_framework import filters
+from rest_framework.decorators import action
 import django_filters.rest_framework
+from rest_framework.response import Response
 from back.nlp.serializers import UserSerializer, GroupSerializer, SongSerializer, WordSerializer, GenreSerializer
 from back.nlp.models import Song, Word, Genre
+from back.nlp.most_similar import most_similar
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -113,6 +116,19 @@ class SongViewSet(viewsets.ModelViewSet):
             for word in real_words:
                 songs = songs.filter(words=word)
         return songs
+
+    @action(detail=True, methods=['get'])
+    def closest_songs(self, request, pk=None):
+        song = self.get_object()
+        if song.words:
+            words = [i['word'] for i in song.words.values()]
+            closest_songs = most_similar(words)
+            songs_objects = Song.objects.filter(music_id__in=[i[0] for i in closest_songs])
+            return Response(songs_objects.values())
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+            
+
 
     """
     if queryset.first().artist == "":

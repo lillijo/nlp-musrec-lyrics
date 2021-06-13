@@ -115,10 +115,13 @@ class SongViewSet(viewsets.ModelViewSet):
                 word__in=self.request.query_params['real_words'].split(','))
             for word in real_words:
                 songs = songs.filter(words=word)
+        if self.request.query_params and 'string_search' in self.request.query_params:
+            string_search = self.request.query_params['string_search']
+            songs = songs.filter(Q(artist__icontains=string_search) | Q(title__icontains=string_search))
         return songs
 
     @action(detail=True, methods=['get'])
-    def closest_songs(self, request, pk=None):
+    def closest(self, request, pk=None):
         song = self.get_object()
         if song.words:
             words = [i['word'] for i in song.words.values()]
@@ -127,10 +130,21 @@ class SongViewSet(viewsets.ModelViewSet):
             return Response(songs_objects.values())
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)
-            
-
-
-    """
+    
+    """      
+    @action(detail=False, methods=['get'])
+    def import_names(self, request):
+        print('here')
+        songs = Song.objects.all()
+    
+        song_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'match_dict.p')
+        data = pickle.load(open(song_path, "rb"))
+        for song in songs:
+            if song.music_id in data.keys():
+                song.artist = data[song.music_id]['artist']
+                song.title = data[song.music_id]['title']
+                song.save()
+    
     if queryset.first().artist == "":
         song_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'newInfos.json')
         with open(song_path, "r")  as data_file:

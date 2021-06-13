@@ -5,6 +5,7 @@
 *.zip
 *.model
 *.pyc
+*.p
 db.sqlite3
 inferred_vectors
 t_sne_vectors

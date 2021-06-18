@@ -125,26 +125,31 @@ class SongViewSet(viewsets.ModelViewSet):
         song = self.get_object()
         if song.words:
             words = [i['word'] for i in song.words.values()]
-            closest_songs = most_similar(words)
-            songs_objects = Song.objects.filter(music_id__in=[i[0] for i in closest_songs])
-            return Response(songs_objects.values())
+            print(words)
+            closest_songs = most_similar(words, song.music_id)
+            print(closest_songs)
+            #songs_objects = Song.objects.filter(music_id__in=[i[0] for i in closest_songs])
+            return Response({'closest':closest_songs})
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)
-    
-    """      
+    """    
     @action(detail=False, methods=['get'])
-    def import_names(self, request):
+    def change_words(self, request):
         print('here')
         songs = Song.objects.all()
-    
-        song_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'match_dict.p')
+        print(len(songs))
+        song_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../../../train_documents')
         data = pickle.load(open(song_path, "rb"))
+        print(len(data))
+        word_dict = {i[1][0]:i[0] for i in data}
+        print(list(word_dict.keys())[0])
         for song in songs:
-            if song.music_id in data.keys():
-                song.artist = data[song.music_id]['artist']
-                song.title = data[song.music_id]['title']
-                song.save()
-    
+            if song.music_id in word_dict:
+                new_words = Word.objects.filter(word__in=word_dict[song.music_id])
+                song.words.set([i.word_id for i in new_words])
+        return Response({'len': len(songs)})
+     
+     
     if queryset.first().artist == "":
         song_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'newInfos.json')
         with open(song_path, "r")  as data_file:

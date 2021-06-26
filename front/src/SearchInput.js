@@ -1,7 +1,9 @@
-import React from "react";
+import React, {useState} from "react";
 import { SearchWrapper, Input, Button } from "./styles";
 
-const SearchInput = ({ search, setSearch, searchSong }) => {
+const SearchInput = ({ searching, title }) => {
+
+  const [search, setSearch] = useState("");
   return (
     <SearchWrapper>
       <Input
@@ -10,8 +12,8 @@ const SearchInput = ({ search, setSearch, searchSong }) => {
         value={search}
         onChange={(e) => setSearch(e.target.value)}
       />
-      <Button type="button" onClick={() => searchSong()}>
-        search
+      <Button type="button" onClick={() => searching(search)}>
+        {title}
       </Button>
     </SearchWrapper>
   );

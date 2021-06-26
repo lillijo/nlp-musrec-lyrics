@@ -111,13 +111,17 @@ class SongViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         songs = Song.objects.all()
         if self.request.query_params and 'real_words' in self.request.query_params:
+            word_list = self.request.query_params['real_words'].split(',')
             real_words = Word.objects.filter(
-                word__in=self.request.query_params['real_words'].split(','))
+                word__in=word_list)
             for word in real_words:
                 songs = songs.filter(words=word)
-        if self.request.query_params and 'string_search' in self.request.query_params:
-            string_search = self.request.query_params['string_search']
-            songs = songs.filter(Q(artist__icontains=string_search) | Q(title__icontains=string_search))
+        if self.request.query_params and 'artist_search' in self.request.query_params:
+            string_search = self.request.query_params['artist_search']
+            songs = songs.filter(artist__icontains=string_search)
+        if self.request.query_params and 'song_search' in self.request.query_params:
+            string_search = self.request.query_params['song_search']
+            songs = songs.filter(title__icontains=string_search)
         return songs
 
     @action(detail=True, methods=['get'])
@@ -129,7 +133,7 @@ class SongViewSet(viewsets.ModelViewSet):
             closest_songs = most_similar(words, song.music_id)
             print(closest_songs)
             #songs_objects = Song.objects.filter(music_id__in=[i[0] for i in closest_songs])
-            return Response({'closest':closest_songs})
+            return Response({'closest': closest_songs})
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)
     """    

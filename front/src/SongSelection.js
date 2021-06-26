@@ -19,13 +19,50 @@ const GENRE_URL = `${BASE_URL}genres/`;
 
 const SongSelection = () => {
   const [selected, setSelected] = useState(null);
-  const [search, setSearch] = useState("");
   const [selection, setSelection] = useState([]);
   const [recommendation, setRecommencation] = useState(null);
   const [navs, setNavs] = useState(null);
 
-  const searchSong = (url = null) => {
-    url = url ?? `${SONGS_URL}?limit=10&string_search=${search}`;
+  const searchBySong = (search, url = null) => {
+    url = url ?? `${SONGS_URL}?limit=10&song_search=${search}`;
+    axios
+      .get(url)
+      .then((res) => {
+        if (res?.data?.count) {
+          setSelection(res.data.results);
+          if (res?.data?.count > 10) {
+            setNavs([res.data.previous, res.data.next]);
+          }
+        } else {
+          setSelection([]);
+        }
+      })
+      .catch((err) => setSelection([]));
+    resetSelection();
+  };
+
+
+  const searchByArtist = (search, url = null) => {
+    url = url ?? `${SONGS_URL}?limit=10&artist_search=${search}`;
+    axios
+      .get(url)
+      .then((res) => {
+        if (res?.data?.count) {
+          setSelection(res.data.results);
+          if (res?.data?.count > 10) {
+            setNavs([res.data.previous, res.data.next]);
+          }
+        } else {
+          setSelection([]);
+        }
+      })
+      .catch((err) => setSelection([]));
+    resetSelection();
+  };
+
+
+  const searchByWords = (search, url = null) => {
+    url = url ?? `${SONGS_URL}?limit=10&real_words=${search}`;
     axios
       .get(url)
       .then((res) => {
@@ -80,9 +117,16 @@ const SongSelection = () => {
   return (
     <AppWrapper>
       <SearchInput
-        search={search}
-        setSearch={setSearch}
-        searchSong={searchSong}
+        searching={searchBySong}
+        title="Search Song Name"
+      />
+      <SearchInput
+        searching={searchByArtist}
+        title="Search Artist"
+      />
+      <SearchInput
+        searching={searchByWords}
+        title="Search Word or List of Words"
       />
       {!selected && (
         <SearchResultList
@@ -93,7 +137,7 @@ const SongSelection = () => {
         />
       )}
       {!selected && navs && navs.length && (
-        <Navigation navs={navs} goToPage={(e) => searchSong(e)} />
+        <Navigation navs={navs} goToPage={(e) => searchBySong("", e)} />
       )}
       {selected && (
         <SelectedSong

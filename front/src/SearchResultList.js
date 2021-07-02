@@ -16,7 +16,9 @@ const SearchResultList = ({ list, selected, select, title }) => {
             selected={item.music_id === selected}
             key={item.music_id}
           >
+          <a href={`https://www.youtube.com/results?search_query=${item.artist} ${item.title}`}>
             <Ellipsis>{item.title}</Ellipsis>
+            </a>
             {" -- "}
             <Ellipsis>{item.artist}</Ellipsis>
           </ListItem>

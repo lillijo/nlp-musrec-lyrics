@@ -128,12 +128,9 @@ class SongViewSet(viewsets.ModelViewSet):
     def closest(self, request, pk=None):
         song = self.get_object()
         if song.words:
-            words = [i['word'] for i in song.words.values()]
-            print(words)
-            closest_songs = most_similar(words, song.music_id)
-            print(closest_songs)
-            #songs_objects = Song.objects.filter(music_id__in=[i[0] for i in closest_songs])
-            return Response({'closest': closest_songs})
+            closest_ids = most_similar(song.music_id, sia=True)
+            closest_songs = Song.objects.filter(music_id__in=[i[1] for i in closest_ids])
+            return Response({'closest': closest_songs.values(), 'distances': closest_ids})
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)
     """    

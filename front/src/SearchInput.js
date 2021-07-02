@@ -1,9 +1,15 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import { SearchWrapper, Input, Button } from "./styles";
 
-const SearchInput = ({ searching, title }) => {
+const SearchInput = ({ searching, title, resetting }) => {
 
   const [search, setSearch] = useState("");
+
+  useEffect(()=> {
+    if(resetting !== search) {
+      setSearch("")
+    }
+  }, [resetting])
   return (
     <SearchWrapper>
       <Input

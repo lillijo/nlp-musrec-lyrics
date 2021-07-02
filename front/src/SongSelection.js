@@ -22,6 +22,7 @@ const SongSelection = () => {
   const [selection, setSelection] = useState([]);
   const [recommendation, setRecommencation] = useState(null);
   const [navs, setNavs] = useState(null);
+  const [searchString, setSearchString] = useState("")
 
   const searchBySong = (search, url = null) => {
     url = url ?? `${SONGS_URL}?limit=10&song_search=${search}`;
@@ -38,7 +39,7 @@ const SongSelection = () => {
         }
       })
       .catch((err) => setSelection([]));
-    resetSelection();
+    resetSelection(search);
   };
 
 
@@ -57,7 +58,7 @@ const SongSelection = () => {
         }
       })
       .catch((err) => setSelection([]));
-    resetSelection();
+    resetSelection(search);
   };
 
 
@@ -76,7 +77,7 @@ const SongSelection = () => {
         }
       })
       .catch((err) => setSelection([]));
-    resetSelection();
+    resetSelection(search);
   };
 
   const selectSong = (song) => {
@@ -98,34 +99,32 @@ const SongSelection = () => {
     const url = `${SONGS_URL}${selected.music_id}/closest`;
     axios.get(url).then((res) => {
       if (res?.data) {
-        const similars = res.data.filter((x) => x.title !== selected.title);
-        setRecommencation(similars);
+        setRecommencation(res.data.closest);
       }
     });
   };
 
-  const openYoutubeLink = (song) => {
-    const url = `https://www.youtube.com/results?search_query=${song.artist} ${song.title}`;
-    window.open(url, "_blank");
-  };
-
-  const resetSelection = () => {
+  const resetSelection = (search="") => {
     setSelected(null);
     setRecommencation(null);
+    setSearchString(search)
   };
 
   return (
     <AppWrapper>
       <SearchInput
         searching={searchBySong}
+        resetting={searchString}
         title="Search Song Name"
       />
       <SearchInput
         searching={searchByArtist}
+        resetting={searchString}
         title="Search Artist"
       />
       <SearchInput
         searching={searchByWords}
+        resetting={searchString}
         title="Search Word or List of Words"
       />
       {!selected && (
@@ -144,14 +143,13 @@ const SongSelection = () => {
           resetSelection={resetSelection}
           selected={selected}
           findMostSimilar={findMostSimilar}
-          openYoutubeLink={() => openYoutubeLink(selected)}
         />
       )}
       {selected && recommendation && (
         <SearchResultList
           list={recommendation}
           selected={selected}
-          select={(k) => openYoutubeLink(k)}
+          select={(k) => selectSong(k)}
           title="Recommendation"
         />
       )}

@@ -104,7 +104,7 @@ export const LineTitle = styled.div`
   font-size: 12px;
 `;
 
-export const YoutubeLink = styled.div`
+export const YoutubeLink = styled.a`
   color: #00ff00;
   text-decoration: underline;
   cursor: pointer;

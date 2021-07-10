@@ -22,7 +22,7 @@ const SongSelection = () => {
   const [selection, setSelection] = useState([]);
   const [recommendation, setRecommencation] = useState(null);
   const [navs, setNavs] = useState(null);
-  const [searchString, setSearchString] = useState("")
+  const [searchString, setSearchString] = useState("");
 
   const searchBySong = (search, url = null) => {
     url = url ?? `${SONGS_URL}?limit=10&song_search=${search}`;
@@ -39,9 +39,10 @@ const SongSelection = () => {
         }
       })
       .catch((err) => setSelection([]));
-    resetSelection(search);
+      if (!url) {
+        resetSelection(search);
+      }
   };
-
 
   const searchByArtist = (search, url = null) => {
     url = url ?? `${SONGS_URL}?limit=10&artist_search=${search}`;
@@ -58,9 +59,10 @@ const SongSelection = () => {
         }
       })
       .catch((err) => setSelection([]));
-    resetSelection(search);
+      if (!url) {
+        resetSelection(search);
+      }
   };
-
 
   const searchByWords = (search, url = null) => {
     url = url ?? `${SONGS_URL}?limit=10&real_words=${search}`;
@@ -77,7 +79,9 @@ const SongSelection = () => {
         }
       })
       .catch((err) => setSelection([]));
-    resetSelection(search);
+    if (!url) {
+      resetSelection(search);
+    }
   };
 
   const selectSong = (song) => {
@@ -104,10 +108,10 @@ const SongSelection = () => {
     });
   };
 
-  const resetSelection = (search="") => {
+  const resetSelection = (search = "") => {
     setSelected(null);
     setRecommencation(null);
-    setSearchString(search)
+    setSearchString(search);
   };
 
   return (

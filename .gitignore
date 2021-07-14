@@ -12,3 +12,6 @@ t_sne_vectors
 train_documents
 test_documents
 counted*
+
+*.ipynb
+!Doc2VecNotebook.ipynb

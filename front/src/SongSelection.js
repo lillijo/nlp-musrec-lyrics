@@ -37,11 +37,11 @@ const SongSelection = () => {
         } else {
           setSelection([]);
         }
+        if (url == null) {
+          resetSelection(search);
+        }
       })
       .catch((err) => setSelection([]));
-      if (!url) {
-        resetSelection(search);
-      }
   };
 
   const searchByArtist = (search, url = null) => {
@@ -57,11 +57,11 @@ const SongSelection = () => {
         } else {
           setSelection([]);
         }
+        if (url == null) {
+          resetSelection(search);
+        }
       })
       .catch((err) => setSelection([]));
-      if (!url) {
-        resetSelection(search);
-      }
   };
 
   const searchByWords = (search, url = null) => {
@@ -77,11 +77,11 @@ const SongSelection = () => {
         } else {
           setSelection([]);
         }
+        if (url == null) {
+          resetSelection(search);
+        }
       })
       .catch((err) => setSelection([]));
-    if (!url) {
-      resetSelection(search);
-    }
   };
 
   const selectSong = (song) => {
